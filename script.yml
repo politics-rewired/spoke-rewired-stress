@@ -1,0 +1,41 @@
+# Full documentation of Artillery at:
+# https://artillery.io/docs/
+config:
+  target: "https://spoke-fly.edgeapp.net"
+  phases:
+    -
+      duration: 10
+      arrivalRate: 3
+scenarios:
+  -
+    flow:
+      -
+        post:
+          url: "/graphql"
+          headers:
+            cookie: "session=SET_ME; session.sig=SET_ME"
+          body: |
+            {
+              "query":"mutation sendMessage($message: MessageInput!, $campaignContactId: String!) {
+                sendMessage(message: $message, campaignContactId: $campaignContactId) {
+                  id
+                  messageStatus
+                  messages {
+                    id
+                    createdAt
+                    text
+                    isFromContact
+                  }
+                }
+              }",
+              "variables":{
+                "message":{
+                  "contactNumber":"+15005665411",
+                  "userId":"1",
+                  "text":"Hey Jerrold, this is a test!",
+                  "assignmentId":"2"
+                },
+                "campaignContactId":"151"
+              },
+              "operationName":"sendMessage"
+            }
