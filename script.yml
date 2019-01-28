@@ -8,6 +8,7 @@ config:
   phases:
     - duration: 1
       arrivalRate: 1
+  processor: "./spoke.js"
 
 scenarios:
   - flow:
@@ -85,10 +86,7 @@ scenarios:
                   validTimezone: true
                 assignmentId: "{{ assignmentId }}"
               operationName: "getContacts"
-            capture:
-              # This does not capture as an array
-              - json: "$.data.assignment.contacts[*].id"
-                as: "contactIds"
+            afterResponse: "captureContactIds"
         - log: "Got contactIds: {{ contactIds }}"
         - loop:
             - log: "  contactId: {{ contactId }}"
