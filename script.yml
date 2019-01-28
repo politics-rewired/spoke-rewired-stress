@@ -2,34 +2,96 @@
 # https://artillery.io/docs/
 ---
 config:
-  target: "https://spoke-fly.edgeapp.net"
+  # target: "http://localhost:3000"
+  target: "https://bernie-spoke.herokuapp.com"
+  # target: "https://spoke-fly.edgeapp.net"
   phases:
-    - duration: 10
-      arrivalRate: 3
+    - duration: 1
+      arrivalRate: 1
 
 scenarios:
   - flow:
-    # https://artillery.io/docs/http-reference/#looping-through-an-array
-      - over:
-          - "session=eyJwYXNzcG9ydCI6eyJ1c2VyIjoiYXV0aDB8NWM0ZTI4NjdkZWQzYjcwM2Y3ZTY3OTI5In19; session.sig=enEqYHLHs99AztkMJbhAx017R-Y"
-        loop:
-          - post:
+    - over:
+        - session: eyJwYXNzcG9ydCI6eyJ1c2VyIjoiYXV0aDB8NWM0ZTQ1OTQ1MDA0NDE3Y2Y5YzE3ZGNhIn19
+          sig: VHzrNXDgRncLzicpnMqyuy16gXw
+      loop:
+        - log: "New virtual user running"
+
+        # Capture first ToDo assignment
+        - post:
             url: "/graphql"
-            cookie: "session=eyJwYXNzcG9ydCI6eyJ1c2VyIjoiYXV0aDB8NWM0ZTI4NjdkZWQzYjcwM2Y3ZTY3OTI5In19; session.sig=enEqYHLHs99AztkMJbhAx017R-Y" # {{ $loopElement }}
-              # session: "SET_ME"
-              # session.sig: "SET_ME"
-            body: >
-              {"query":"query getTodos($organizationId: String!, $needsMessageFilter: ContactsFilter, $needsResponseFilter: ContactsFilter, $badTimezoneFilter: ContactsFilter, $completedConvosFilter: ContactsFilter, $pastMessagesFilter: ContactsFilter, $skippedMessagesFilter: ContactsFilter) {\n  currentUser {\n    id\n    terms\n    todos(organizationId: $organizationId) {\n      id\n      campaign {\n        id\n        title\n        description\n        useDynamicAssignment\n        hasUnassignedContacts\n        introHtml\n        primaryColor\n        logoImageUrl\n      }\n      maxContacts\n      unmessagedCount: contactsCount(contactsFilter: $needsMessageFilter)\n      unrepliedCount: contactsCount(contactsFilter: $needsResponseFilter)\n      badTimezoneCount: contactsCount(contactsFilter: $badTimezoneFilter)\n      totalMessagedCount: contactsCount(contactsFilter: $completedConvosFilter)\n      pastMessagesCount: contactsCount(contactsFilter: $pastMessagesFilter)\n      skippedMessagesCount: contactsCount(contactsFilter: $skippedMessagesFilter)\n    }\n  }\n}\n","variables":{"organizationId":"1","needsMessageFilter":{"messageStatus":"needsMessage","isOptedOut":false,"validTimezone":true},"needsResponseFilter":{"messageStatus":"needsResponse","isOptedOut":false,"validTimezone":true},"badTimezoneFilter":{"isOptedOut":false,"validTimezone":false},"completedConvosFilter":{"isOptedOut":false,"validTimezone":true,"messageStatus":"messaged"},"pastMessagesFilter":{"messageStatus":"convo","isOptedOut":false,"validTimezone":true},"skippedMessagesFilter":{"messageStatus":"closed","isOptedOut":false,"validTimezone":true}},"operationName":"getTodos"}
+            header:
+              Content-Type: "application/json"
+            cookie:
+              session: "{{ $loopElement.session }}"
+              session.sig: "{{ $loopElement.sig }}"
+            json: {
+              "query": "query getTodos($organizationId: String!, $needsMessageFilter: ContactsFilter, $needsResponseFilter: ContactsFilter, $badTimezoneFilter: ContactsFilter, $completedConvosFilter: ContactsFilter, $pastMessagesFilter: ContactsFilter, $skippedMessagesFilter: ContactsFilter) {\n  currentUser {\n    id\n    terms\n    todos(organizationId: $organizationId) {\n      id\n      campaign {\n        id\n        title\n        description\n        useDynamicAssignment\n        hasUnassignedContacts\n        introHtml\n        primaryColor\n        logoImageUrl\n      }\n      maxContacts\n      unmessagedCount: contactsCount(contactsFilter: $needsMessageFilter)\n      unrepliedCount: contactsCount(contactsFilter: $needsResponseFilter)\n      badTimezoneCount: contactsCount(contactsFilter: $badTimezoneFilter)\n      totalMessagedCount: contactsCount(contactsFilter: $completedConvosFilter)\n      pastMessagesCount: contactsCount(contactsFilter: $pastMessagesFilter)\n      skippedMessagesCount: contactsCount(contactsFilter: $skippedMessagesFilter)\n    }\n  }\n}\n",
+              "variables": {
+                  "organizationId": "1",
+                  "needsMessageFilter": {
+                      "messageStatus": "needsMessage",
+                      "isOptedOut": false,
+                      "validTimezone": true
+                  },
+                  "needsResponseFilter": {
+                      "messageStatus": "needsResponse",
+                      "isOptedOut": false,
+                      "validTimezone": true
+                  },
+                  "badTimezoneFilter": {
+                      "isOptedOut": false,
+                      "validTimezone": false
+                  },
+                  "completedConvosFilter": {
+                      "isOptedOut": false,
+                      "validTimezone": true,
+                      "messageStatus": "messaged"
+                  },
+                  "pastMessagesFilter": {
+                      "messageStatus": "convo",
+                      "isOptedOut": false,
+                      "validTimezone": true
+                  },
+                  "skippedMessagesFilter": {
+                      "messageStatus": "closed",
+                      "isOptedOut": false,
+                      "validTimezone": true
+                  }
+              },
+              "operationName": "getTodos"
+            }
             capture:
-              json: /data/___getTodos___requestIndex_1___fieldIndex_0/todos[1]/campaign/id
-              as: "assignmentId"
-          - log: " Got campaign id {{ assignmentId }}"
-          # - post:
-          #   url: "/graphql"
-          #   cookie:
-          #     session: {{ $loopElement }}
-          #   body: |
-          #     {
-          #       "query": ""
-          #     }
-        
+              - json: "$.data.currentUser.id"
+                as: "userId"
+              - json: "$.data.currentUser.todos[0].campaign.id"
+                as: "assignmentId"
+        - log: "Got campaignId: {{ assignmentId }}; userId: {{ userId }}"
+
+        # Capture contact IDs from frist assignment
+        - post:
+            url: "/graphql"
+            header:
+              Content-Type: "application/json"
+            cookie:
+              session: "{{ $loopElement.session }}"
+              session.sig: "{{ $loopElement.sig }}"
+            json:
+              query: "query getContacts($assignmentId: String!, $contactsFilter: ContactsFilter!) {\n  assignment(id: $assignmentId) {\n    id\n    userCannedResponses {\n      id\n      title\n      text\n      isUserCreated\n    }\n    campaignCannedResponses {\n      id\n      title\n      text\n      isUserCreated\n    }\n    texter {\n      id\n      firstName\n      lastName\n      assignedCell\n    }\n    campaign {\n      id\n      isArchived\n      useDynamicAssignment\n      organization {\n        id\n        textingHoursEnforced\n        textingHoursStart\n        textingHoursEnd\n        threeClickEnabled\n        optOutMessage\n      }\n      customFields\n      interactionSteps {\n        id\n        script\n        question {\n          text\n          answerOptions {\n            value\n            nextInteractionStep {\n              id\n              script\n            }\n          }\n        }\n      }\n    }\n    contacts(contactsFilter: $contactsFilter) {\n      id\n    }\n    allContactsCount: contactsCount\n  }\n}\n"
+              variables:
+                contactsFilter:
+                  messageStatus: "needsMessage"
+                  isOptedOut: false
+                  validTimezone: true
+                assignmentId: "{{ assignmentId }}"
+              operationName: "getContacts"
+            capture:
+              # This does not capture as an array
+              - json: "$.data.assignment.contacts[*].id"
+                as: "contactIds"
+        - log: "Got contactIds: {{ contactIds }}"
+        - loop:
+            - log: "  contactId: {{ contactId }}"
+          loopElement: contactId
+          loopValue: contactIdCount
+          over: contactIds
