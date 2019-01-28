@@ -1,0 +1,43 @@
+# Tests for loops within Artillery scripts
+
+---
+config:
+  target: https://www.google.com
+  phases:
+    - duration: 1
+      arrivalRate: 1
+  variables:
+    outerArray:
+      - ['outer1', 'outer2']
+    innerArray:
+      - ['inner1', 'inner2']
+
+scenarios:
+  - flow:
+    - log: "Testing basic loop"
+    - loop:
+        - log: "  Basic loop: {{ $loopCount }}"
+      count: 5
+
+    - log: "\nTesting loop over inline array"
+    - loop:
+        - log: "  Inline loop over array {{ $loopElement }}"
+      over:
+        - 'outer1'
+        - 'outer2'
+
+    - log: "\nTesting loop over variable array"
+    - loop:
+        - log: "  {{ $loopElement }}"
+      over: outerArray
+
+    - log: "\nTesting loop over nested variable array"
+    - loop:
+        - loop:
+            - log: "  {{ outerElement }} {{ innerElement }}"
+          over: innerArray
+          loopElement: innerElement
+          loopValue: innerCount
+      over: outerArray
+      loopElement: outerElement
+      loopValue: outerCount
