@@ -7,10 +7,10 @@ const produceFakeList = (path, count) => {
   const people = new Array(count)
     .fill(null)
     .map(_ => [
-      faker.random.alphaNumeric(),
+      faker.random.alphaNumeric(10),
       faker.name.firstName(),
       faker.name.lastName(),
-      faker.phone.phoneNumberFormat(),
+      "+1" + faker.phone.phoneNumberFormat().replace(/-/g, ""),
       faker.address.zipCode()
     ]);
 
