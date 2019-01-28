@@ -1,0 +1,13 @@
+{
+  "name": "spoke-stress",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/politics-rewired/spoke-stress.git",
+  "author": "ben-pr-p <ben.paul.ryan.packer@gmail.com>",
+  "scripts": {
+    "fake-file": "node utils.js fake-file"
+  },
+  "dependencies": {
+    "faker": "^4.1.0"
+  }
+}
