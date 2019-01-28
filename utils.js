@@ -3,14 +3,15 @@ const faker = require("faker");
 const DEFAULT_FILE_SIZE = 100;
 
 const produceFakeList = (path, count) => {
-  const header = [["external_id", "firstName", "lastName", "phone"]];
+  const header = [["external_id", "firstName", "lastName", "cell", "zip"]];
   const people = new Array(count)
     .fill(null)
     .map(_ => [
       faker.random.alphaNumeric(),
       faker.name.firstName(),
       faker.name.lastName(),
-      faker.phone.phoneNumber()
+      faker.phone.phoneNumberFormat(),
+      faker.address.zipCode()
     ]);
 
   fs.writeFileSync(
