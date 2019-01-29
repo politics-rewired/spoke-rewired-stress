@@ -87,9 +87,48 @@ scenarios:
                 assignmentId: "{{ assignmentId }}"
               operationName: "getContacts"
             afterResponse: "captureContactIds"
-        - log: "Got contactIds: {{ contactIds }}"
-        - loop:
-            - log: "  contactId: {{ contactId }}"
-          loopElement: contactId
-          loopValue: contactIdCount
-          over: contactIds
+        - log: "Got {{ contactIdBatchCount }} contact id batches"
+        - loopElement: contactIdBatch
+          loopValue: contactIdBatchNumber
+          over: contactIdBatches
+          loop:
+            - post:
+                url: "/graphql"
+                header:
+                  Content-Type: "application/json"
+                cookie:
+                  session: "{{ $loopElement.session }}"
+                  session.sig: "{{ $loopElement.sig }}"
+                json:
+                  query: "mutation getAssignmentContacts($assignmentId: String!, $contactIds: [String]!, $findNew: Boolean) {\n  getAssignmentContacts(assignmentId: $assignmentId, contactIds: $contactIds, findNew: $findNew) {\n    id\n    assignmentId\n    firstName\n    lastName\n    cell\n    zip\n    customFields\n    optOut {\n      id\n    }\n    questionResponseValues {\n      interactionStepId\n      value\n    }\n    location {\n      city\n      state\n      timezone {\n        offset\n        hasDST\n      }\n    }\n    messageStatus\n    messages {\n      id\n      createdAt\n      text\n      isFromContact\n    }\n  }\n}\n"
+                  operationName: "getAssignmentContacts"
+                  variables:
+                    assignmentId: "{{ assignmentId }}"
+                    contactIds: "{{ contactIdBatch }}"
+                    findNew: true
+                afterResponse: "captureAssignmentContacts"
+            - log: "Retrieved assignment contacts for id batch {{ contactIdBatchNumber }}"
+            - loopElement: contact
+              loopValue: contactNumber
+              over: assignmentContacts
+              loop:
+                - post:
+                    url: "/graphql"
+                    header:
+                      Content-Type: "application/json"
+                    cookie:
+                      session: "{{ $loopElement.session }}"
+                      session.sig: "{{ $loopElement.sig }}"
+                    json:
+                      query: "mutation sendMessage($message: MessageInput!, $campaignContactId: String!) {\n  sendMessage(message: $message, campaignContactId: $campaignContactId) {\n    id\n    messageStatus\n    messages {\n      id\n      createdAt\n      text\n      isFromContact\n    }\n  }\n}\n"
+                      variables: 
+                        campaignContactId: "{{ contact.id }}"
+                        message:
+                          contactNumber: "{{ contact.cell }}"
+                          assignmentId: "{{ contact.assignmentId }}"
+                          text: "This text was sent by Artillery!"
+                          userId: "{{ userId }}"
+                      operationName: "sendMessage"
+                    afterResponse: captureTextSuccessStatus
+
+                    

@@ -1,6 +1,10 @@
+const _ = require("lodash");
+
 module.exports = {
-  captureContactIds: captureContactIds
-}
+  captureContactIds,
+  captureAssignmentContacts,
+  captureTextSuccessStatus
+};
 
 // For signature reference
 function setJSONBody(requestParams, context, ee, next) {
@@ -8,8 +12,24 @@ function setJSONBody(requestParams, context, ee, next) {
 }
 
 function captureContactIds(requestParams, response, context, ee, next) {
-  var contacts = response.body.data.assignment.contacts;
-  var contactIds = contacts.map(contact => contact.id);
-  context.vars.contactIds = contactIds;
+  const contacts = response.body.data.assignment.contacts;
+  const contactIds = contacts.map(contact => contact.id);
+
+  const contactIdBatches = _.chunk(contactIds, 10);
+
+  context.vars.contactIdBatches = contactIdBatches;
+  context.vars.contactIdBatchCount = contactIdBatches.length;
+  return next();
+}
+
+function captureAssignmentContacts(requestParams, response, context, ee, next) {
+  const assignmentContacts = response.body.data.getAssignmentContacts;
+  context.vars.assignmentContacts = assignmentContacts;
+  return next();
+}
+
+function captureTextSuccessStatus(requestParams, response, context, ee, next) {
+  const successful = !!response.data.sendMessage;
+  context.vars.successful = successful;
   return next();
 }
