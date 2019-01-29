@@ -2,7 +2,9 @@ const puppeteer = require("puppeteer");
 const faker = require("faker");
 const papaparse = require("papaparse");
 const fs = require("fs");
+const _ = require("lodash");
 const PASSWORD = "Password!";
+const BATCH_SIZE = 5;
 
 async function main(n, outputPath) {
   const campaignJoinLink = process.argv[2];
@@ -11,15 +13,25 @@ async function main(n, outputPath) {
 
   const allCookies = [];
 
-  let count = 0;
-  while (count < n) {
-    const cookies = await signUpUser(browser, campaignJoinLink);
-    const toKeep = cookies
-      .filter(cookie => cookie.name.includes("session"))
-      .reduce((acc, kv) => Object.assign(acc, { [kv.name]: kv.value }), {});
+  const batches = _.chunk(
+    new Array(n).fill(null).map((ignore, idx) => idx),
+    BATCH_SIZE
+  );
 
-    allCookies.push(toKeep);
-    count++;
+  for (let batch of batches) {
+    console.log(`Creating new batch of ${batch.length}`);
+    const promises = batch.map(idx =>
+      (async () => {
+        const cookies = await signUpUser(browser, campaignJoinLink);
+        const toKeep = cookies
+          .filter(cookie => cookie.name.includes("session"))
+          .reduce((acc, kv) => Object.assign(acc, { [kv.name]: kv.value }), {});
+
+        allCookies.push(toKeep);
+      })()
+    );
+
+    await Promise.all(promises);
   }
 
   const output = papaparse.unparse(allCookies);
@@ -72,6 +84,6 @@ async function signUpUser(browser, campaignJoinLink) {
 const sleep = n =>
   new Promise((resolve, reject) => setTimeout(() => resolve(true), n));
 
-main(process.argv[3] || 1, process.argv[4] || "./cookies.csv")
+main(parseInt(process.argv[3] || 1), process.argv[4] || "./cookies.csv")
   .then(console.log)
   .catch(console.error);
