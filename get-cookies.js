@@ -1,6 +1,6 @@
 const puppeteer = require("puppeteer");
 const faker = require("faker");
-const yaml = require("yaml");
+const papaparse = require("papaparse");
 const fs = require("fs");
 const PASSWORD = "Password!";
 
@@ -22,7 +22,7 @@ async function main(n, outputPath) {
     count++;
   }
 
-  const output = yaml.stringify({ over: allCookies });
+  const output = papaparse.unparse(allCookies);
   fs.writeFileSync(outputPath, output);
 
   await browser.close();
@@ -72,6 +72,6 @@ async function signUpUser(browser, campaignJoinLink) {
 const sleep = n =>
   new Promise((resolve, reject) => setTimeout(() => resolve(true), n));
 
-main(process.argv[3] || 1, process.argv[4] || "./cookies.yml")
+main(process.argv[3] || 1, process.argv[4] || "./cookies.csv")
   .then(console.log)
   .catch(console.error);

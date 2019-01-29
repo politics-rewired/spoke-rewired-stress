@@ -8,7 +8,7 @@ config:
   phases:
     - duration: 1
       arrivalRate: 1
-  processor: "./spoke.js"
+  processor: "./artillery-processor.js"
 
 scenarios:
   - flow:
