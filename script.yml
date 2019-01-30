@@ -8,8 +8,10 @@ config:
   payload:
     path: "cookies.csv"
     fields:
-      - "session"
       - "session.sig"
+      - "session"
+    order: sequence
+    skipHeader: true
   phases:
     - duration: 1
       arrivalRate: 1
@@ -27,48 +29,46 @@ scenarios:
           cookie:
             session: "{{ session }}"
             session.sig: "{{ session.sig }}"
-          json: {
-            "query": "query getTodos($organizationId: String!, $needsMessageFilter: ContactsFilter, $needsResponseFilter: ContactsFilter, $badTimezoneFilter: ContactsFilter, $completedConvosFilter: ContactsFilter, $pastMessagesFilter: ContactsFilter, $skippedMessagesFilter: ContactsFilter) {\n  currentUser {\n    id\n    terms\n    todos(organizationId: $organizationId) {\n      id\n      campaign {\n        id\n        title\n        description\n        useDynamicAssignment\n        hasUnassignedContacts\n        introHtml\n        primaryColor\n        logoImageUrl\n      }\n      maxContacts\n      unmessagedCount: contactsCount(contactsFilter: $needsMessageFilter)\n      unrepliedCount: contactsCount(contactsFilter: $needsResponseFilter)\n      badTimezoneCount: contactsCount(contactsFilter: $badTimezoneFilter)\n      totalMessagedCount: contactsCount(contactsFilter: $completedConvosFilter)\n      pastMessagesCount: contactsCount(contactsFilter: $pastMessagesFilter)\n      skippedMessagesCount: contactsCount(contactsFilter: $skippedMessagesFilter)\n    }\n  }\n}\n",
-            "variables": {
-                "organizationId": "1",
-                "needsMessageFilter": {
+          json:
+            query: "query getTodos($organizationId: String!, $needsMessageFilter: ContactsFilter, $needsResponseFilter: ContactsFilter, $badTimezoneFilter: ContactsFilter, $completedConvosFilter: ContactsFilter, $pastMessagesFilter: ContactsFilter, $skippedMessagesFilter: ContactsFilter) {\n  currentUser {\n    id\n    terms\n    todos(organizationId: $organizationId) {\n      id\n      campaign {\n        id\n        title\n        description\n        useDynamicAssignment\n        hasUnassignedContacts\n        introHtml\n        primaryColor\n        logoImageUrl\n      }\n      maxContacts\n      unmessagedCount: contactsCount(contactsFilter: $needsMessageFilter)\n      unrepliedCount: contactsCount(contactsFilter: $needsResponseFilter)\n      badTimezoneCount: contactsCount(contactsFilter: $badTimezoneFilter)\n      totalMessagedCount: contactsCount(contactsFilter: $completedConvosFilter)\n      pastMessagesCount: contactsCount(contactsFilter: $pastMessagesFilter)\n      skippedMessagesCount: contactsCount(contactsFilter: $skippedMessagesFilter)\n    }\n  }\n}\n"
+            variables:
+                organizationId: "1"
+                needsMessageFilter: {
                     "messageStatus": "needsMessage",
                     "isOptedOut": false,
                     "validTimezone": true
-                },
-                "needsResponseFilter": {
+                }
+                needsResponseFilter: {
                     "messageStatus": "needsResponse",
                     "isOptedOut": false,
                     "validTimezone": true
-                },
-                "badTimezoneFilter": {
+                }
+                badTimezoneFilter: {
                     "isOptedOut": false,
                     "validTimezone": false
-                },
-                "completedConvosFilter": {
+                }
+                completedConvosFilter: {
                     "isOptedOut": false,
                     "validTimezone": true,
                     "messageStatus": "messaged"
-                },
-                "pastMessagesFilter": {
+                }
+                pastMessagesFilter: {
                     "messageStatus": "convo",
                     "isOptedOut": false,
                     "validTimezone": true
-                },
-                "skippedMessagesFilter": {
+                }
+                skippedMessagesFilter: {
                     "messageStatus": "closed",
                     "isOptedOut": false,
                     "validTimezone": true
                 }
-            },
-            "operationName": "getTodos"
-          }
+            operationName: "getTodos"
           capture:
-            - json: "$.data.currentUser.id"
-              as: "userId"
-            - json: "$.data.currentUser.todos[0].campaign.id"
-              as: "assignmentId"
-      - log: "Got campaignId: {{ assignmentId }}; userId: {{ userId }}"
+              - json: "$.data.currentUser.id"
+                as: "userId"
+              - json: "$.data.currentUser.todos[0].id"
+                as: "assignmentId"
+      - log: "Got assignmentId: {{ assignmentId }}; userId: {{ userId }}"
 
       # Capture contact IDs from frist assignment
       - post:
@@ -76,8 +76,8 @@ scenarios:
           header:
             Content-Type: "application/json"
           cookie:
-            session: "{{ $loopElement.session }}"
-            session.sig: "{{ $loopElement.sig }}"
+            session: "{{ session }}"
+            session.sig: "{{ session.sig }}"
           json:
             query: "query getContacts($assignmentId: String!, $contactsFilter: ContactsFilter!) {\n  assignment(id: $assignmentId) {\n    id\n    userCannedResponses {\n      id\n      title\n      text\n      isUserCreated\n    }\n    campaignCannedResponses {\n      id\n      title\n      text\n      isUserCreated\n    }\n    texter {\n      id\n      firstName\n      lastName\n      assignedCell\n    }\n    campaign {\n      id\n      isArchived\n      useDynamicAssignment\n      organization {\n        id\n        textingHoursEnforced\n        textingHoursStart\n        textingHoursEnd\n        threeClickEnabled\n        optOutMessage\n      }\n      customFields\n      interactionSteps {\n        id\n        script\n        question {\n          text\n          answerOptions {\n            value\n            nextInteractionStep {\n              id\n              script\n            }\n          }\n        }\n      }\n    }\n    contacts(contactsFilter: $contactsFilter) {\n      id\n    }\n    allContactsCount: contactsCount\n  }\n}\n"
             variables:
@@ -89,6 +89,7 @@ scenarios:
             operationName: "getContacts"
           afterResponse: "captureContactIds"
       - log: "Got {{ contactIdBatchCount }} contact id batches"
+
       - loopElement: contactIdBatch
         loopValue: contactIdBatchNumber
         over: contactIdBatches
@@ -98,8 +99,8 @@ scenarios:
               header:
                 Content-Type: "application/json"
               cookie:
-                session: "{{ $loopElement.session }}"
-                session.sig: "{{ $loopElement.sig }}"
+                session: "{{ session }}"
+                session.sig: "{{ session.sig }}"
               json:
                 query: "mutation getAssignmentContacts($assignmentId: String!, $contactIds: [String]!, $findNew: Boolean) {\n  getAssignmentContacts(assignmentId: $assignmentId, contactIds: $contactIds, findNew: $findNew) {\n    id\n    assignmentId\n    firstName\n    lastName\n    cell\n    zip\n    customFields\n    optOut {\n      id\n    }\n    questionResponseValues {\n      interactionStepId\n      value\n    }\n    location {\n      city\n      state\n      timezone {\n        offset\n        hasDST\n      }\n    }\n    messageStatus\n    messages {\n      id\n      createdAt\n      text\n      isFromContact\n    }\n  }\n}\n"
                 operationName: "getAssignmentContacts"
@@ -109,6 +110,7 @@ scenarios:
                   findNew: true
               afterResponse: "captureAssignmentContacts"
           - log: "Retrieved assignment contacts for id batch {{ contactIdBatchNumber }}"
+          
           - loopElement: contact
             loopValue: contactNumber
             over: assignmentContacts
@@ -118,8 +120,8 @@ scenarios:
                   header:
                     Content-Type: "application/json"
                   cookie:
-                    session: "{{ $loopElement.session }}"
-                    session.sig: "{{ $loopElement.sig }}"
+                    session: "{{ session }}"
+                    session.sig: "{{ session.sig }}"
                   json:
                     query: "mutation sendMessage($message: MessageInput!, $campaignContactId: String!) {\n  sendMessage(message: $message, campaignContactId: $campaignContactId) {\n    id\n    messageStatus\n    messages {\n      id\n      createdAt\n      text\n      isFromContact\n    }\n  }\n}\n"
                     variables:
@@ -131,3 +133,4 @@ scenarios:
                         userId: "{{ userId }}"
                     operationName: "sendMessage"
                   afterResponse: captureTextSuccessStatus
+              - log: "Successful text send? {{ successful }}"

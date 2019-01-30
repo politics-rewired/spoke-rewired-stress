@@ -1674,10 +1674,6 @@ yallist@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/yallist/-/yallist-2.1.2.tgz#1c11f9218f076089a47dd512f93c6699a6a81d52"
 
-yaml@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.3.1.tgz#058453683f6e459bfa1854ae6110b68c72438c8e"
-
 yauzl@2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/yauzl/-/yauzl-2.4.1.tgz#9528f442dab1b2284e58b4379bb194e22e0c4005"
