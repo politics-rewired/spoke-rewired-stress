@@ -5,7 +5,7 @@
   "repository": "https://github.com/politics-rewired/spoke-stress.git",
   "author": "ben-pr-p <ben.paul.ryan.packer@gmail.com>",
   "scripts": {
-    "fake-file": "node utils.js fake-file",
+    "fake-file": "node fakeFile.js fake-file",
     "artillery": "artillery"
   },
   "dependencies": {
