@@ -13,13 +13,13 @@ config:
     order: sequence
     skipHeader: true
   phases:
-    - duration: 1
-      arrivalRate: 1
+    - duration: 125
+      arrivalCount: 250
   processor: "./artillery-processor.js"
 
 scenarios:
   - flow:
-      - log: "New virtual user running"
+      # - log: "New virtual user running"
 
       # Capture first ToDo assignment
       - post:
@@ -68,7 +68,7 @@ scenarios:
                 as: "userId"
               - json: "$.data.currentUser.todos[0].id"
                 as: "assignmentId"
-      - log: "Got assignmentId: {{ assignmentId }}; userId: {{ userId }}"
+      # - log: "Got assignmentId: {{ assignmentId }}; userId: {{ userId }}"
 
       # Capture contact IDs from frist assignment
       - post:
@@ -88,7 +88,7 @@ scenarios:
               assignmentId: "{{ assignmentId }}"
             operationName: "getContacts"
           afterResponse: "captureContactIds"
-      - log: "Got {{ contactIdBatchCount }} contact id batches"
+      # - log: "Got {{ contactIdBatchCount }} contact id batches"
 
       - loopElement: contactIdBatch
         loopValue: contactIdBatchNumber
@@ -109,7 +109,7 @@ scenarios:
                   contactIds: "{{ contactIdBatch }}"
                   findNew: true
               afterResponse: "captureAssignmentContacts"
-          - log: "Retrieved assignment contacts for id batch {{ contactIdBatchNumber }}"
+          # - log: "Retrieved assignment contacts for id batch {{ contactIdBatchNumber }}"
           
           - loopElement: contact
             loopValue: contactNumber
@@ -133,4 +133,4 @@ scenarios:
                         userId: "{{ userId }}"
                     operationName: "sendMessage"
                   afterResponse: captureTextSuccessStatus
-              - log: "Successful text send? {{ successful }}"
+              # - log: "Successful text send? {{ successful }}"
