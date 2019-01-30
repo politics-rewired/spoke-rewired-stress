@@ -9,7 +9,7 @@ const BATCH_SIZE = 5;
 async function main(n, outputPath) {
   const campaignJoinLink = process.argv[2];
   console.log(`Creating new users with campaign join link ${campaignJoinLink}`);
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: true });
 
   const allCookies = [];
 
