@@ -5,6 +5,11 @@ config:
   # target: "http://localhost:3000"
   target: "https://bernie-spoke.herokuapp.com"
   # target: "https://spoke-fly.edgeapp.net"
+  payload:
+    path: "cookies.csv"
+    fields:
+      - "session"
+      - "session.sig"
   phases:
     - duration: 1
       arrivalRate: 1
