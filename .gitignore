@@ -1,3 +1,7 @@
+# Artillery
+cookies.csv
+.serverless/
+
 # Logs
 logs
 *.log

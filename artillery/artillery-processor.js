@@ -29,7 +29,7 @@ function captureAssignmentContacts(requestParams, response, context, ee, next) {
 }
 
 function captureTextSuccessStatus(requestParams, response, context, ee, next) {
-  const successful = !!response.data.sendMessage;
+  const successful = !!response.body.data.sendMessage;
   context.vars.successful = successful;
   return next();
 }
