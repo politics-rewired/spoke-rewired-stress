@@ -1,5 +1,4 @@
 # Artillery
-cookies.csv
 .serverless/
 
 # Logs
@@ -64,5 +63,5 @@ typings/
 # next.js build output
 .next
 *.csv
+!artillery/cookies.csv
 output/
-cookies.csv
