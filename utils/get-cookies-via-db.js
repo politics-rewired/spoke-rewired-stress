@@ -5,13 +5,13 @@ const faker = require("faker");
 const { createCookieString } = require("./generate-cookie");
 
 const db = require("knex")({
-  client: "postgresql",
+  client: "mysql",
   connection: {
     host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     database: process.env.DB_NAME,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    ssl: process.env.DB_USE_SSL
   },
   pool: {
     min: 2,
@@ -19,14 +19,24 @@ const db = require("knex")({
   }
 });
 
+const createOrg = process.env.CREATE_ORG !== 'false'
+  && process.env.CREATE_ORG !== false
+  && !!process.env.CREATE_ORG;
+
+const idxOffset = process.env.INDEX_OFFSET || 0;
+
 const outputPath = "./cookies.csv";
 
 main()
   .then(console.log)
-  .catch(console.error);
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error);
+    process.exit(1);
+  });
 
 async function main() {
-  return await createUsers(20);
+  return await createUsers(2500);
 }
 
 async function createUsers(numberOfUsers) {
@@ -37,7 +47,7 @@ async function createUsers(numberOfUsers) {
   };
 
   const users = new Array(numberOfUsers).fill(null).map((_, idx) => ({
-    id: idx,
+    id: idx + idxOffset,
     auth0_id: `${idx}`,
     first_name: faker.name.firstName(),
     last_name: faker.name.lastName(),
@@ -50,7 +60,7 @@ async function createUsers(numberOfUsers) {
   const userOrganizations = new Array(numberOfUsers)
     .fill(null)
     .map((_, idx) => ({
-      user_id: idx,
+      user_id: idx + idxOffset,
       organization_id: 1,
       role: "TEXTER"
     }));
@@ -70,11 +80,15 @@ async function createUsers(numberOfUsers) {
     role: "ADMIN"
   };
 
-  users.push(admin);
-  userOrganizations.push(adminOrganization);
+  if (createOrg) {
+    users.push(admin);
+    userOrganizations.push(adminOrganization);
+  }
 
   await db.transaction(async trx => {
-    await trx.insert(organization).into("public.organization");
+    if (createOrg) {
+      await trx.insert(organization).into("public.organization");
+    }
     await trx.insert(users).into("public.user");
     await trx.insert(userOrganizations).into("public.user_organization");
     return "Success";
