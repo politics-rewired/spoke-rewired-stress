@@ -23,7 +23,8 @@ const createOrg = process.env.CREATE_ORG !== 'false'
   && process.env.CREATE_ORG !== false
   && !!process.env.CREATE_ORG;
 
-const idxOffset = process.env.INDEX_OFFSET || 0;
+let idxOffset = process.env.INDEX_OFFSET || 0;
+idxOffset = parseInt(idxOffset);
 
 const outputPath = "./cookies.csv";
 
