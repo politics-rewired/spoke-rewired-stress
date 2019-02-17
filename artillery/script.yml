@@ -2,14 +2,12 @@
 # https://artillery.io/docs/
 ---
 config:
-  # target: "http://localhost:3000"
-  target: "https://bernie-spoke.herokuapp.com"
-  # target: "https://spoke-fly.edgeapp.net"
+  target: "https://text.berniesanders.com"
   payload:
     path: "cookies.csv"
     fields:
-      - "session.sig"
       - "session"
+      - "session.sig"
     order: sequence
     skipHeader: true
   phases:
@@ -19,7 +17,7 @@ config:
 
 scenarios:
   - flow:
-      # - log: "New virtual user running"
+      - log: "New virtual user running"
 
       # Capture first ToDo assignment
       - post:
