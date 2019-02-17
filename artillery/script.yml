@@ -9,7 +9,6 @@ config:
       - "session"
       - "session.sig"
     order: sequence
-    skipHeader: true
   phases:
     - duration: 125
       arrivalCount: 250
