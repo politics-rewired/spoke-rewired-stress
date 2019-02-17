@@ -13,8 +13,8 @@ function setJSONBody(requestParams, context, ee, next) {
 
 function captureContactIds(requestParams, response, context, ee, next) {
   if (response.body.data) {
-	  const assignment = response.body.data.assignment || {};
-    const contacts = response.body.data.assignment.contacts || [];
+    const assignment = response.body.data.assignment || {};
+    const contacts = assignment.contacts || [];
     const contactIds = contacts.map(contact => contact.id);
 
     const contactIdBatches = _.chunk(contactIds, 10);
@@ -31,7 +31,7 @@ function captureContactIds(requestParams, response, context, ee, next) {
 function captureAssignmentContacts(requestParams, response, context, ee, next) {
   let assignmentContacts = [];
   if (response.body.data) {
-	  assignmentContacts = response.body.data.getAssignmentContacts;
+    assignmentContacts = response.body.data.getAssignmentContacts;
   }
   context.vars.assignmentContacts = assignmentContacts;
   return next();
@@ -40,9 +40,9 @@ function captureAssignmentContacts(requestParams, response, context, ee, next) {
 function captureTextSuccessStatus(requestParams, response, context, ee, next) {
   let successful = false;
   if (response.body.data) {
-	  successful = !!response.body.data.sendMessage;
+    successful = !!response.body.data.sendMessage;
   } else {
-	  console.log(JSON.stringify(response.body));
+    console.log(JSON.stringify(response.body));
   }
   context.vars.successful = successful;
   return next();
