@@ -1,4 +1,8 @@
+require("dotenv").config();
+const fs = require("fs");
+const papaparse = require("papaparse");
 const faker = require("faker");
+const { createCookieString } = require("./generate-cookie");
 
 const db = require("knex")({
   client: "postgresql",
@@ -14,6 +18,8 @@ const db = require("knex")({
     max: 10
   }
 });
+
+const outputPath = "./cookies.csv";
 
 main()
   .then(console.log)
@@ -54,6 +60,7 @@ async function createUsers(numberOfUsers) {
     auth0_id: "UFX7LV4QN",
     first_name: "Ben",
     last_name: "Packer",
+    email: "ben.paul.ryan.packer@gmail.com",
     cell: "2147010869"
   };
 
@@ -66,10 +73,15 @@ async function createUsers(numberOfUsers) {
   users.push(admin);
   userOrganizations.push(adminOrganization);
 
-  return await db.transaction(async trx => {
-    await trx.insert(organization).into("organizations");
+  await db.transaction(async trx => {
+    await trx.insert(organization).into("public.organization");
     await trx.insert(users).into("public.user");
-    await trx.insert(userOrganizations).into("user_organizations;");
+    await trx.insert(userOrganizations).into("public.user_organization");
     return "Success";
   });
+
+  const cookies = users.map(({ auth0_id }) => createCookieString(auth0_id));
+  const output = papaparse.unparse(cookies);
+  fs.writeFileSync(outputPath, output);
+  return "Done";
 }
