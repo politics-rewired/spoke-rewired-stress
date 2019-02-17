@@ -10,8 +10,8 @@ config:
       - "session.sig"
     order: sequence
   phases:
-    - duration: 125
-      arrivalCount: 250
+    - duration: 300
+      arrivalCount: 300
   processor: "./artillery-processor.js"
 
 scenarios:
