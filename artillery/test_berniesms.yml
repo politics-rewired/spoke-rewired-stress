@@ -1,0 +1,26 @@
+# Full documentation of Artillery at:
+# https://artillery.io/docs/
+---
+config:
+  target: "https://www.bernietext.com"
+  payload:
+    path: "shift_request.csv"
+    fields:
+      - "auth_token"
+      - "request_email"
+      - "request_count"
+    order: sequence
+  phases:
+    - duration: 300
+      arrivalCount: 300
+
+scenarios:
+  - flow:
+    - post:
+          url: "/api/1/shift-request"
+          header:
+            Content-Type: "application/json"
+            Authorization: "Bearer {{ auth_token }}"
+          json:
+            email: {{ request_email }}
+            count: {{ request_count }}
