@@ -21,9 +21,11 @@ scenarios:
           url: "/autoassign"
           header:
             Content-Type: "application/json"
-          cookie:
-            session: "{{ session }}"
-            session.sig: "{{ session.sig }}"
+          # Auth is undocumented:
+          # https://github.com/artilleryio/artillery/issues/211#issuecomment-262598511
+          auth:
+            user: "{{ auth_username }}"
+            pass: "{{ auth_password }}"
           json:
             slack_id: {{ request_slack_id }}
             count: {{ request_count }}
