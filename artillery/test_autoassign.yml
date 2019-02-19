@@ -1,0 +1,29 @@
+# Full documentation of Artillery at:
+# https://artillery.io/docs/
+---
+config:
+  target: "https://text.berniesanders.com"
+  payload:
+    path: "autoassign.csv"
+    fields:
+      - "auth_username"
+      - "auth_password"
+      - "request_slack_id"
+      - "request_count"
+    order: sequence
+  phases:
+    - duration: 300
+      arrivalCount: 300
+
+scenarios:
+  - flow:
+    - post:
+          url: "/autoassign"
+          header:
+            Content-Type: "application/json"
+          cookie:
+            session: "{{ session }}"
+            session.sig: "{{ session.sig }}"
+          json:
+            slack_id: {{ request_slack_id }}
+            count: {{ request_count }}

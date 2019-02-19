@@ -64,4 +64,5 @@ typings/
 .next
 *.csv
 !artillery/cookies.csv
+!artillery/autoassign.csv
 output/
