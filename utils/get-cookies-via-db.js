@@ -11,7 +11,7 @@ const db = require("knex")({
     port: process.env.DB_PORT,
     database: process.env.DB_NAME,
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
+    password: process.env.DB_PASSWORD
   },
   pool: {
     min: 2,
@@ -19,9 +19,10 @@ const db = require("knex")({
   }
 });
 
-const createOrg = process.env.CREATE_ORG !== 'false'
-  && process.env.CREATE_ORG !== false
-  && !!process.env.CREATE_ORG;
+const createOrg =
+  process.env.CREATE_ORG !== "false" &&
+  process.env.CREATE_ORG !== false &&
+  !!process.env.CREATE_ORG;
 
 let idxOffset = process.env.INDEX_OFFSET || 0;
 idxOffset = parseInt(idxOffset);
