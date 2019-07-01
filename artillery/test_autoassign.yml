@@ -2,9 +2,9 @@
 # https://artillery.io/docs/
 ---
 config:
-  target: "https://text.berniesanders.com"
+  target: "{{ $processEnvironment.BASE_URL }}"
   payload:
-    path: "autoassign.csv"
+    path: "{{ $processEnvironment.AUTOASSIGN_CSV_PATH }}"
     fields:
       - "auth_username"
       - "auth_password"

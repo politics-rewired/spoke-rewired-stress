@@ -2,9 +2,9 @@
 # https://artillery.io/docs/
 ---
 config:
-  target: "https://text.berniesanders.com"
+  target: "{{ $processEnvironment.BASE_URL }}"
   payload:
-    path: "cookies.csv"
+    path: "{{ $processEnvironment.SESSION_COOKIES_CSV_PATH }}"
     fields:
       - "session"
       - "session.sig"
