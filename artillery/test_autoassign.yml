@@ -17,7 +17,7 @@ config:
 
 scenarios:
   - flow:
-    - post:
+      - post:
           url: "/autoassign"
           header:
             Content-Type: "application/json"
