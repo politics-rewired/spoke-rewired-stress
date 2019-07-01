@@ -2,7 +2,7 @@ require("dotenv").config();
 const fs = require("fs");
 const papaparse = require("papaparse");
 const faker = require("faker");
-const { createCookieString } = require("./generate-cookie");
+const { createCookieString } = require("./lib/generate-cookie");
 
 const db = require("knex")({
   client: "mysql",
