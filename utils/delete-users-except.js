@@ -10,13 +10,12 @@
 require("dotenv").config();
 const request = require("superagent");
 
-const url = path => `https://politicsrewired.auth0.com/api/v2${path}`;
+const { AUTH0_DOMAIN, AUTH0_API_MANAGEMENT_TOKEN } = process.env;
+
+const url = path => `https://${AUTH0_DOMAIN}/api/v2${path}`;
 
 const postprocess = chainable =>
-  chainable.set(
-    "Authorization",
-    `Bearer ${process.env.AUTH0_API_MANAGEMENT_TOKEN}`
-  );
+  chainable.set("Authorization", `Bearer ${AUTH0_API_MANAGEMENT_TOKEN}`);
 
 const listAllUsers = () => postprocess(request.get(url("/users")));
 const deleteUser = id => postprocess(request.delete(url(`/user/${id}`)));
