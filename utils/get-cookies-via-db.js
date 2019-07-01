@@ -37,7 +37,7 @@ main()
   });
 
 async function main() {
-  return await createUsers(2500);
+  return await createUsers(30);
 }
 
 async function createUsers(numberOfUsers) {
@@ -88,10 +88,10 @@ async function createUsers(numberOfUsers) {
 
   await db.transaction(async trx => {
     if (createOrg) {
-      await trx.insert(organization).into("public.organization");
+      await trx.insert(organization).into("organization");
     }
-    await trx.insert(users).into("public.user");
-    await trx.insert(userOrganizations).into("public.user_organization");
+    await trx.insert(users).into("user");
+    await trx.insert(userOrganizations).into("user_organization");
     return "Success";
   });
 
