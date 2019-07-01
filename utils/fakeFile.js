@@ -1,3 +1,7 @@
+/**
+ * CLI script to generate file of fake Spoke contacts for upload and use in testing.
+ */
+
 const fs = require("fs");
 const faker = require("faker");
 const DEFAULT_FILE_SIZE = 100;

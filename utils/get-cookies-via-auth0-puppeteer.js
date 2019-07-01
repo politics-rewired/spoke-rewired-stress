@@ -1,3 +1,12 @@
+/**
+ * NOTE: Deprecated in favor of get-cookies-via-db.js
+ *
+ * This CLI script generates the cookies.csv file of credentials by using puppeteer to capture
+ * the cookies for login sessions.
+ *
+ *     node get-cookies-via-auth0-puppeteer.js JOIN_URL NUMBER_TO_CREATE=1 PATH=./cookies.csv
+ */
+
 const puppeteer = require("puppeteer");
 const faker = require("faker");
 const papaparse = require("papaparse");

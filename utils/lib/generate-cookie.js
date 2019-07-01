@@ -7,6 +7,11 @@ if (!secret) {
 }
 const keys = new Keygrip([secret]);
 
+/**
+ * Programattically generate cookies for a Spoke user session and its signature using the session secret.
+ *
+ * @param {string} auth0Id Auth0 ID to create session cookie for.
+ */
 const createCookieString = auth0Id => {
   const jsonString = JSON.stringify({ passport: { user: auth0Id } });
   const buffer = new Buffer(jsonString);

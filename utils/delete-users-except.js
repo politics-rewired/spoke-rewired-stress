@@ -1,3 +1,12 @@
+/**
+ * This CLI script is used to clean up Auth0 users created for testing purposes.
+ *
+ * It takes a comma-separated list of users to keep, fetches all Auth0 users, and deletes every
+ * user that is not in the exception list.
+ *
+ *     node delete-users-except.js user1@domain.com,user2@domain.com,user3@domain.com
+ */
+
 require("dotenv").config();
 const request = require("superagent");
 
