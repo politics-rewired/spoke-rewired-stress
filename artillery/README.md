@@ -1,5 +1,11 @@
 # Serverless Artillery
 
+## Environment Variables
+
+- `BASE_URL` - Base URL to run the artillery scripts against.
+- `SESSION_COOKIES_CSV_PATH` - Path to CSV file containing session cookie values. These may be generated using the two scripts in the [`utils`](../utils) directory.
+- `AUTOASSIGN_CSV_PATH` - Path to CSV file containing autoassignment request credentials and payloads.
+
 ## Before You Begin:
 
 This currently only runs locally with `artillery`, not on Lambda with `serverless-artillery`. Even locally, changes are required to `artillery@v1.6.0-26`.
