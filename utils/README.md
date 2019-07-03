@@ -17,7 +17,7 @@ yarn fake-file row_count output_file.csv
 Used to generate the `cookies.csv` file that is used to authenticate the stress test requests.
 
 ```sh
-node get-cookies-via-db.js 'https://text.domain.com/00000000-0000-4000-0000-000000000000/join' 10
+node get-cookies-via-db.js
 ```
 
 [**`delete-users-except`**](./delete-users-except.js)
