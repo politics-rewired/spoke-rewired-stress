@@ -1,5 +1,10 @@
 # Serverless Artillery
 
+This directory contains:
+
+- A collection of Artillery scripts to stress test various Spoke functionality.
+- A currently-defunct Serverless-Artillery setup for running these tests using a serverless cloud offering like AWS Lambda.
+
 ## Environment Variables
 
 - `BASE_URL` - Base URL to run the artillery scripts against.
