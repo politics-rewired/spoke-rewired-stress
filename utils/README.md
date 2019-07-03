@@ -4,6 +4,8 @@ Spoke utilities for stress testing.
 
 ## Usage
 
+See each file for environment variable reference.
+
 [**`fake-file`**](./fakeFile.js)
 
 Used to generate a Spoke-style CSV of contacts with appropriate fields. Cell numbers are not guaranteed to be valid.

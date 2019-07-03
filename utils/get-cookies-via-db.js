@@ -1,3 +1,18 @@
+/**
+ * This CLI script generates a cookies.csv file of 30 credentials by inserting test users into the database and programatically
+ *
+ *     node get-cookies-via-db.js
+ *
+ * Environment variables:
+ *   DB_HOST      - [required] Database host.
+ *   DB_PORT      - [required] Database port.
+ *   DB_NAME      - [required] Database name.
+ *   DB_USER      - [required] Database username.
+ *   DB_PASSWORD  - [required] Database user's password.
+ *   CREATE_ORG   - [optional] Boolean indicating whether to create a text organization. Default = true.
+ *   INDEX_OFFSET - [optional] Offset to add to primary index of users the script creates. Default = 0.
+ */
+
 require("dotenv").config();
 const fs = require("fs");
 const papaparse = require("papaparse");

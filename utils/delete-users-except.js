@@ -5,6 +5,10 @@
  * user that is not in the exception list.
  *
  *     node delete-users-except.js user1@domain.com,user2@domain.com,user3@domain.com
+ *
+ * Environment variables:
+ *   AUTH0_DOMAIN               - [required] The domain of the Auth0 tenant, ex. myorg.auth0.com
+ *   AUTH0_API_MANAGEMENT_TOKEN - [required] API token from https://auth0.com/docs/api/management/v2/tokens
  */
 
 require("dotenv").config();

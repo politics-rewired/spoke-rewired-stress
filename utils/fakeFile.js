@@ -1,5 +1,12 @@
 /**
  * CLI script to generate file of fake Spoke contacts for upload and use in testing.
+ *
+ *     node fakeFile.js COMMAND [COUNT] [OUTPUT_PATH]
+ *
+ * Arguments
+ *   COMMAND     - [required] The name of the command to run. 'fake-file' is the only supported command.
+ *   COUNT       - [optional] The number of fake contacts to generate. Default = 100.
+ *   OUTPUT_PATH - [optional] The output path for the generated CSV. Default = './fake-file.csv'.
  */
 
 const fs = require("fs");

@@ -4,7 +4,12 @@
  * This CLI script generates the cookies.csv file of credentials by using puppeteer to capture
  * the cookies for login sessions.
  *
- *     node get-cookies-via-auth0-puppeteer.js JOIN_URL NUMBER_TO_CREATE=1 PATH=./cookies.csv
+ *     node get-cookies-via-auth0-puppeteer.js JOIN_URL [NUMBER_TO_CREATE] [PATH]
+ *
+ * Arguments
+ *   JOIN_URL         - [required] The URL to join an existing Spoke organization.
+ *   NUMBER_TO_CREATE - [optional] The number of users to create. Default = 1.
+ *   OUTPUT_PATH      - [optional] The output path for the generated CSV. Default = './cookies.csv'.
  */
 
 const puppeteer = require("puppeteer");
