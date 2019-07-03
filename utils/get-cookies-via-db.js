@@ -4,14 +4,24 @@ const papaparse = require("papaparse");
 const faker = require("faker");
 const { createCookieString } = require("./lib/generate-cookie");
 
+const {
+  DB_HOST,
+  DB_PORT,
+  DB_NAME,
+  DB_USER,
+  DB_PASSWORD,
+  CREATE_ORG,
+  INDEX_OFFSET
+} = process.env;
+
 const db = require("knex")({
   client: "mysql",
   connection: {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    database: process.env.DB_NAME,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD
+    host: DB_HOST,
+    port: DB_PORT,
+    database: DB_NAME,
+    user: DB_USER,
+    password: DB_PASSWORD
   },
   pool: {
     min: 2,
@@ -20,11 +30,9 @@ const db = require("knex")({
 });
 
 const createOrg =
-  process.env.CREATE_ORG !== "false" &&
-  process.env.CREATE_ORG !== false &&
-  !!process.env.CREATE_ORG;
+  CREATE_ORG !== "false" && CREATE_ORG !== false && !!CREATE_ORG;
 
-let idxOffset = process.env.INDEX_OFFSET || 0;
+let idxOffset = INDEX_OFFSET || 0;
 idxOffset = parseInt(idxOffset);
 
 const outputPath = "./cookies.csv";
