@@ -19,7 +19,7 @@
     "mysql": "^2.16.0",
     "papaparse": "^4.6.3",
     "pg": "^7.8.0",
-    "puppeteer": "^1.11.0",
+    "puppeteer": "^1.13.0",
     "superagent": "^4.1.0"
   }
 }
