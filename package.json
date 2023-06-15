@@ -1,0 +1,26 @@
+{
+  "name": "spoke-stress",
+  "version": "0.1.0",
+  "description": "Load testing for various Spoke Rewired services.",
+  "main": "index.js",
+  "repository": "git@github.com:politics-rewired/spoke-stress.git",
+  "author": "Benjamin Chrobot <benjamin.chrobot@alum.mit.edu>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "artillery": "artillery"
+  },
+  "dependencies": {
+    "artillery": "^2.0.0-33",
+    "csv-parse": "^5.4.0",
+    "csv-stringify": "^6.4.0",
+    "dotenv": "^16.1.4",
+    "faker": "^6.6.6",
+    "keygrip": "^1.1.0",
+    "lodash": "^4.17.21",
+    "papaparse": "^5.4.1",
+    "pg": "^8.11.0",
+    "puppeteer": "^20.7.1",
+    "superagent": "^8.0.9"
+  }
+}
