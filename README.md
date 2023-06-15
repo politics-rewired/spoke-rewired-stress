@@ -1,3 +1,5 @@
-# Spoke Stress Testing
+# Spoke Rewired Stress Testing
 
-[Artillery project](./artillery) for stress testing and [utilities](./utils) for set up and teardown.
+Load testing for Spoke Rewired services using the [Artillery](https://www.artillery.io/) framework.
+
+Each component service has its own load testing scripts and configuration under [`./targets`](`./targets`).
