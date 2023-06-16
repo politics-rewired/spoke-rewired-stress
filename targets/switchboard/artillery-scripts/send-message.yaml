@@ -3,9 +3,9 @@ config:
     staging:
       target: "https://staging.switchboard.assemble.live"
       phases:
-        - duration: 180
-          arrivalRate: 150
-          maxVusers: 160
+        - duration: 600
+          arrivalRate: 200
+          maxVusers: 220
   processor: "../processors/sendMessageProcessor.js"
 
 scenarios:
