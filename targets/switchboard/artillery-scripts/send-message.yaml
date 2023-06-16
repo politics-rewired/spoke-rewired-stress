@@ -40,6 +40,8 @@ scenarios:
             - json: "$.data.sendMessage.outboundMessage.createdAt"
               as: "messageCreatedAt"
 
+      - think: 0.2
+
       - log: "Receive 'message-sending' DLR"
       - post:
           url: "/hooks/status/{{ $processEnvironment.SWITCHBOARD_SENDING_ACCOUNT_ID }}"
