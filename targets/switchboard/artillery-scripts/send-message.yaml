@@ -28,13 +28,12 @@ scenarios:
                 }
               }
             variables:
-              input:
-                profileId: "{{ $processEnvironment.SWITCHBOARD_PROFILE_ID }}"
-                to: "{{ toNumber }}"
-                body: "An SMS from Artillery load test!"
-                contactZipCode: "11238"
-                mediaUrls: []
-                sendBefore: "2024-01-01"
+              profileId: "{{ $processEnvironment.SWITCHBOARD_PROFILE_ID }}"
+              to: "{{ toNumber }}"
+              body: "An SMS from Artillery load test!"
+              contactZipCode: "11238"
+              mediaUrls: []
+              sendBefore: "2024-01-01"
           capture:
             - json: "$.data.sendMessage.outboundMessage.id"
               as: "messageId"
