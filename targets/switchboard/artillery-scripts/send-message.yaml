@@ -6,6 +6,7 @@ config:
         - duration: 180
           arrivalRate: 150
           maxVusers: 160
+  processor: "../processors/sendMessageProcessor.js"
 
 scenarios:
   - name: "Sending Bandwidth messages"
@@ -13,6 +14,7 @@ scenarios:
       - log: "Execute sendMessage mutation"
       - post:
           url: "/sms/graphql"
+          beforeRequest: generateSendMessageParams
           headers:
             token: "{{ $processEnvironment.SWITCHBOARD_AUTH_TOKEN }}"
           json:
@@ -28,7 +30,7 @@ scenarios:
             variables:
               input:
                 profileId: "{{ $processEnvironment.SWITCHBOARD_PROFILE_ID }}"
-                to: "+16463893770"
+                to: "{{ toNumber }}"
                 body: "An SMS from Artillery load test!"
                 contactZipCode: "11238"
                 mediaUrls: []
