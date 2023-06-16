@@ -1,0 +1,88 @@
+config:
+  environments:
+    staging:
+      target: "https://staging.switchboard.assemble.live"
+      phases:
+        - duration: 180
+          arrivalRate: 150
+          maxVusers: 160
+
+scenarios:
+  - name: "Sending Bandwidth messages"
+    flow:
+      - log: "Execute sendMessage mutation"
+      - post:
+          url: "/sms/graphql"
+          headers:
+            token: "{{ $processEnvironment.SWITCHBOARD_AUTH_TOKEN }}"
+          json:
+            query: |
+              mutation sendMessage($profileId: UUID!, $to: PhoneNumber!, $body: String!, $contactZipCode: ZipCode, $mediaUrls: [Url], $sendBefore: Datetime!) {
+                sendMessage(input: {profileId: $profileId, to: $to, body: $body, contactZipCode: $contactZipCode, mediaUrls: $mediaUrls, sendBefore: $sendBefore}) {
+                  outboundMessage {
+                    id
+                    createdAt
+                  }
+                }
+              }
+            variables:
+              input:
+                profileId: "{{ $processEnvironment.SWITCHBOARD_PROFILE_ID }}"
+                to: "+16463893770"
+                body: "An SMS from Artillery load test!"
+                contactZipCode: "11238"
+                mediaUrls: []
+                sendBefore: "2024-01-01"
+          capture:
+            - json: "$.data.sendMessage.outboundMessage.id"
+              as: "messageId"
+            - json: "$.data.sendMessage.outboundMessage.createdAt"
+              as: "messageCreatedAt"
+
+      - log: "Receive 'message-sending' DLR"
+      - post:
+          url: "/hooks/status/{{ $processEnvironment.SWITCHBOARD_SENDING_ACCOUNT_ID }}"
+          headers:
+            Authorization: "Basic {{ $processEnvironment.BANDWIDTH_CALLBACK_BASIC_AUTH }}"
+          json:
+            - time: ""
+              type: "message-sending"
+              to: "+16463893770"
+              errorCode: ""
+              description: ""
+              message:
+                id: "SomethingRandom"
+                # owner: ""
+                # applicationId: ""
+                time: "{{ messageCreatedAt }}"
+                segmentCount: 1
+                direction: "outbound"
+                to:
+                  - "+16463893770"
+                media: []
+                text: "An SMS from Artillery load test!"
+                tag: "v1|{{ messageId }}|{{ messageCreatedAt }}"
+
+      - log: "Receive 'message-delivered' DLR"
+      - post:
+          url: "/hooks/status/{{ $processEnvironment.SWITCHBOARD_SENDING_ACCOUNT_ID }}"
+          headers:
+            Authorization: "Basic {{ $processEnvironment.BANDWIDTH_CALLBACK_BASIC_AUTH }}"
+          json:
+            - time: ""
+              type: "message-delivered"
+              to: "+16463893770"
+              errorCode: ""
+              description: ""
+              message:
+                id: "SomethingRandom"
+                # owner: ""
+                # applicationId: ""
+                time: "{{ messageCreatedAt }}"
+                segmentCount: 1
+                direction: "outbound"
+                to:
+                  - "+16463893770"
+                media: []
+                text: "An SMS from Artillery load test!"
+                tag: "v1|{{ messageId }}|{{ messageCreatedAt }}"
