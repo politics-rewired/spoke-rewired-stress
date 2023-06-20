@@ -11,7 +11,7 @@ config:
 scenarios:
   - name: "Sending Bandwidth messages"
     flow:
-      - log: "Execute sendMessage mutation"
+      # Execute sendMessage mutation
       - post:
           url: "/sms/graphql"
           beforeRequest: generateSendMessageParams
@@ -42,7 +42,7 @@ scenarios:
 
       - think: 0.2
 
-      - log: "Receive 'message-sending' DLR"
+      # Receive 'message-sending' DLR
       - post:
           url: "/hooks/status/{{ $processEnvironment.SWITCHBOARD_SENDING_ACCOUNT_ID }}"
           headers:
@@ -66,7 +66,7 @@ scenarios:
                 text: "An SMS from Artillery load test!"
                 tag: "v1|{{ messageId }}|{{ messageCreatedAt }}"
 
-      - log: "Receive 'message-delivered' DLR"
+      # Receive 'message-delivered' DLR
       - post:
           url: "/hooks/status/{{ $processEnvironment.SWITCHBOARD_SENDING_ACCOUNT_ID }}"
           headers:
