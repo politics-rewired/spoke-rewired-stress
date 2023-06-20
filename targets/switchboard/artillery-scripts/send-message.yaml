@@ -54,7 +54,7 @@ scenarios:
               errorCode: ""
               description: ""
               message:
-                id: "SomethingRandom"
+                id: "service-{{ messageId }}"
                 # owner: ""
                 # applicationId: ""
                 time: "{{ messageCreatedAt }}"
@@ -78,7 +78,7 @@ scenarios:
               errorCode: ""
               description: ""
               message:
-                id: "SomethingRandom"
+                id: "service-{{ messageId }}"
                 # owner: ""
                 # applicationId: ""
                 time: "{{ messageCreatedAt }}"
