@@ -54,6 +54,7 @@ scenarios:
             - json: "$.data.sendMessage.outboundMessage.createdAt"
               as: "messageCreatedAt"
 
+      # Give process-grey-route-message a chance to work
       - think: 0.2
 
       # Receive 'message-sending' DLR
