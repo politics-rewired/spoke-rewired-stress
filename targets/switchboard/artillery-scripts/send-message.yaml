@@ -3,9 +3,21 @@ config:
     staging:
       target: "https://staging.switchboard.assemble.live"
       phases:
-        - duration: 600
+        - name: Spike - Spoke Autosending @ 100
+          duration: 180
+          arrivalRate: 100
+        - name: Spike - Spoke Autosending @ 200
+          duration: 180
           arrivalRate: 200
-          maxVusers: 220
+        - name: Spike - Spoke Autosending @ 300
+          duration: 180
+          arrivalRate: 300
+        - name: Spike - Spoke Autosending @ 400
+          duration: 180
+          arrivalRate: 400
+        - name: Spike - Spoke Autosending @ 500
+          duration: 180
+          arrivalRate: 500
   plugins:
     metrics-by-endpoint: {}
   processor: "../processors/sendMessageProcessor.js"
