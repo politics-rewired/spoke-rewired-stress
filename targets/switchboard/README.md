@@ -23,11 +23,33 @@ vi .env
 
 ## Running
 
-Artillery scripts can be run like this:
+Artillery scripts can be run locally like this:
 
 ```sh
 yarn artillery run \
   --platform=local \
+  --environment=staging \
+  --dotenv=targets/switchboard/.env \
+  targets/switchboard/artillery-scripts/send-message.yaml
+```
+
+Artillery scripts can be run from AWS Lambda like this:
+
+Get session for MFA-enabled users. The session returned by the command may be set as the AWS credentials [a few different ways](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).
+
+```sh
+aws sts get-session-token \
+  --serial-number arn:aws:iam::123456789012:mfa/user \
+  --token-code code-from-token
+```
+
+Run the script on Lambda:
+
+```sh
+yarn artillery run \
+  --platform=aws:lambda \
+  --platform-opt region=us-east-1 \
+  --platform-opt memory-size=2048 \
   --environment=staging \
   --dotenv=targets/switchboard/.env \
   targets/switchboard/artillery-scripts/send-message.yaml
