@@ -6,6 +6,8 @@ config:
         - duration: 600
           arrivalRate: 200
           maxVusers: 220
+  plugins:
+    metrics-by-endpoint: {}
   processor: "../processors/sendMessageProcessor.js"
 
 scenarios:

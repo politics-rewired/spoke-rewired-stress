@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "artillery": "^2.0.0-33",
+    "artillery-plugin-metrics-by-endpoint": "^1.2.0",
     "csv-parse": "^5.4.0",
     "csv-stringify": "^6.4.0",
     "dotenv": "^16.1.4",
