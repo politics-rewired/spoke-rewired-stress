@@ -1,0 +1,106 @@
+config:
+  environments:
+    staging:
+      target: "https://staging.switchboard.assemble.live"
+      phases:
+        - name: Spike - Spoke Autosending @ 100
+          duration: 180
+          arrivalRate: 100
+        - name: Spike - Spoke Autosending @ 200
+          duration: 180
+          arrivalRate: 200
+        - name: Spike - Spoke Autosending @ 300
+          duration: 180
+          arrivalRate: 300
+        - name: Spike - Spoke Autosending @ 400
+          duration: 180
+          arrivalRate: 400
+        - name: Spike - Spoke Autosending @ 500
+          duration: 180
+          arrivalRate: 500
+  plugins:
+    metrics-by-endpoint: {}
+  processor: "../processors/sendMessageProcessor.js"
+
+scenarios:
+  - name: "Sending Bandwidth messages"
+    flow:
+      # Execute sendMessage mutation
+      - post:
+          url: "/sms/graphql"
+          beforeRequest: generateSendMessageParams
+          headers:
+            token: "{{ $processEnvironment.SWITCHBOARD_AUTH_TOKEN }}"
+          json:
+            query: |
+              mutation sendMessage($profileId: UUID!, $to: PhoneNumber!, $body: String!, $contactZipCode: ZipCode, $mediaUrls: [Url], $sendBefore: Datetime!) {
+                sendMessage(input: {profileId: $profileId, to: $to, body: $body, contactZipCode: $contactZipCode, mediaUrls: $mediaUrls, sendBefore: $sendBefore}) {
+                  outboundMessage {
+                    id
+                    createdAt
+                  }
+                }
+              }
+            variables:
+              profileId: "{{ $processEnvironment.SWITCHBOARD_PROFILE_ID }}"
+              to: "{{ toNumber }}"
+              body: "An SMS from Artillery load test 💣!"
+              contactZipCode: "11238"
+              mediaUrls: []
+              sendBefore: "2099-01-01"
+          capture:
+            - json: "$.data.sendMessage.outboundMessage.id"
+              as: "messageId"
+            - json: "$.data.sendMessage.outboundMessage.createdAt"
+              as: "messageCreatedAt"
+
+      # Give process-grey-route-message a chance to work
+      - think: 0.2
+
+      # Receive 'message-sending' DLR
+      - post:
+          url: "/hooks/status/{{ $processEnvironment.SWITCHBOARD_SENDING_ACCOUNT_ID }}"
+          headers:
+            Authorization: "Basic {{ $processEnvironment.BANDWIDTH_CALLBACK_BASIC_AUTH }}"
+          json:
+            - time: ""
+              type: "message-sending"
+              to: "+16463893770"
+              errorCode: ""
+              description: ""
+              message:
+                id: "service-{{ messageId }}"
+                # owner: ""
+                # applicationId: ""
+                time: "{{ messageCreatedAt }}"
+                segmentCount: 1
+                direction: "outbound"
+                to:
+                  - "+16463893770"
+                media: []
+                text: "An SMS from Artillery load test!"
+                tag: "v1|{{ messageId }}|{{ messageCreatedAt }}"
+
+      # Receive 'message-delivered' DLR
+      - post:
+          url: "/hooks/status/{{ $processEnvironment.SWITCHBOARD_SENDING_ACCOUNT_ID }}"
+          headers:
+            Authorization: "Basic {{ $processEnvironment.BANDWIDTH_CALLBACK_BASIC_AUTH }}"
+          json:
+            - time: ""
+              type: "message-delivered"
+              to: "+16463893770"
+              errorCode: ""
+              description: ""
+              message:
+                id: "service-{{ messageId }}"
+                # owner: ""
+                # applicationId: ""
+                time: "{{ messageCreatedAt }}"
+                segmentCount: 1
+                direction: "outbound"
+                to:
+                  - "+16463893770"
+                media: []
+                text: "An SMS from Artillery load test!"
+                tag: "v1|{{ messageId }}|{{ messageCreatedAt }}"

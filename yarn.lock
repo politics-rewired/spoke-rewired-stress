@@ -2161,6 +2161,13 @@ artillery-plugin-expect@latest:
     debug "^4.3.2"
     lodash "^4.17.21"
 
+artillery-plugin-metrics-by-endpoint@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/artillery-plugin-metrics-by-endpoint/-/artillery-plugin-metrics-by-endpoint-1.2.0.tgz#eaf9850ab86e200f816cf5d9d4e3b1308a17bbca"
+  integrity sha512-4SatrmYffyex/j/wjCBW2gVGwgRfLSJFBTuOGM1pJH3l0iEOeHM+/HOzVIUL8IQbnjA/G1WpkJL3bB7jOuX4Dg==
+  dependencies:
+    debug "^4.3.2"
+
 artillery-plugin-metrics-by-endpoint@latest:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/artillery-plugin-metrics-by-endpoint/-/artillery-plugin-metrics-by-endpoint-1.0.2.tgz#268928dbd4938cfd7b08ccf84d4ada20f009cf99"
