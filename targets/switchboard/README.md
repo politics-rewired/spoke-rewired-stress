@@ -51,6 +51,9 @@ yarn artillery run \
   --platform-opt region=us-east-1 \
   --platform-opt memory-size=2048 \
   --environment=staging \
+  --count=20 \
   --dotenv=targets/switchboard/.env \
   targets/switchboard/artillery-scripts/send-message.yaml
 ```
+
+Lambda limits the file descriptor count [to 1024 per worker](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html). You will need to specify a worker count (`--count`) that will support the maximum concurrent virtual users for the script.
