@@ -47,7 +47,7 @@ scenarios:
               body: "An SMS from Artillery load test!"
               contactZipCode: "11238"
               mediaUrls: []
-              sendBefore: "2024-01-01"
+              sendBefore: "2099-01-01"
           capture:
             - json: "$.data.sendMessage.outboundMessage.id"
               as: "messageId"
