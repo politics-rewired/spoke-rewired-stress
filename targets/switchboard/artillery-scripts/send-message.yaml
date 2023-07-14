@@ -44,7 +44,7 @@ scenarios:
             variables:
               profileId: "{{ $processEnvironment.SWITCHBOARD_PROFILE_ID }}"
               to: "{{ toNumber }}"
-              body: "An SMS from Artillery load test!"
+              body: "An SMS from Artillery load test 💣!"
               contactZipCode: "11238"
               mediaUrls: []
               sendBefore: "2099-01-01"
